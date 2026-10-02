@@ -3,6 +3,7 @@ package dev.jonasjones;
 import com.google.gson.*;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
+import dev.jonasjones.mcp.BuildGptMcp;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -65,8 +66,15 @@ public class BuildGPT implements ModInitializer {
 					.then(Commands.literal("unbound")
 							.then(Commands.argument("start_pos", BlockPosArgument.blockPos())
 									.then(Commands.argument("building", StringArgumentType.greedyString())
-										.executes(BuildGPT::executeBuildGptUnboud)))));
+										.executes(BuildGPT::executeBuildGptUnboud))))
+					.then(Commands.literal("mcp")
+							.executes(context -> {
+								context.getSource().sendSystemMessage(Component.literal(BuildGptMcp.status()));
+								return 1;
+							})));
 		});
+
+		BuildGptMcp.register();
 	}
 
 	private static int executeBuildGptdBound(CommandContext<CommandSourceStack> context) {
